@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 FINANCE_SPREADSHEET_ID = "1yiHbSLDIIYPZPJrgfSnpJZKelaQ3CFVE9bFPs77MMAI"
 
@@ -23,8 +23,8 @@ def get_google_creds():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists("token.pickle"):
+        with open("token.pickle", "rb") as token:
             creds = pickle.load(token)
 
     # If there are no (valid) credentials available, let the user log in.
@@ -32,20 +32,19 @@ def get_google_creds():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_console()
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open("token.pickle", "wb") as token:
             pickle.dump(creds, token)
 
     return creds
 
 
-def deserialize_sheets(accounts, value_ranges, days = 30):
+def deserialize_sheets(accounts, value_ranges, days=30):
     account_to_transactions = {}
     for idx in range(len(accounts)):
-        values = value_ranges[idx]['values']
+        values = value_ranges[idx]["values"]
         headings = values[0]
         date_idx = headings.index("Date")
         amount_idx = headings.index("Effective Amount")
@@ -58,36 +57,53 @@ def deserialize_sheets(accounts, value_ranges, days = 30):
         # only use ack'd transactions
         values = list(filter(lambda v: v[ack_idx] == "Yes", values))
 
-        transactions = [{'date': datetime.datetime.strptime(value[date_idx], "%Y-%m-%d"), 'amount': value[amount_idx], 'category': value[category_idx]} for value in values]
+        transactions = [
+            {
+                "date": datetime.datetime.strptime(value[date_idx], "%Y-%m-%d"),
+                "amount": value[amount_idx],
+                "category": value[category_idx],
+            }
+            for value in values
+        ]
 
         # filter out dates before days ago
-        transactions = list(filter(lambda t: t['date'] > datetime.datetime.now() - datetime.timedelta(days=days), transactions))
+        transactions = list(
+            filter(
+                lambda t: t["date"]
+                > datetime.datetime.now() - datetime.timedelta(days=days),
+                transactions,
+            )
+        )
 
         account_to_transactions[accounts[idx]] = transactions
     return account_to_transactions
 
 
-@app.route('/api/charges')
+@app.route("/api/charges")
 def get_charges():
-    num_days = int(request.args.get('days', 30))
+    num_days = int(request.args.get("days", 30))
     creds = get_google_creds()
-    service = build('sheets', 'v4', credentials=creds, cache_discovery=False)
-    spreadsheet = service.spreadsheets().get(
-        spreadsheetId=FINANCE_SPREADSHEET_ID,
-    ).execute()
-    titles = [sheet['properties']['title'] for sheet in spreadsheet['sheets']]
-    titles = list(filter(lambda t: t not in ['Template', 'Categories'], titles))
+    service = build("sheets", "v4", credentials=creds, cache_discovery=False)
+    spreadsheet = (
+        service.spreadsheets().get(spreadsheetId=FINANCE_SPREADSHEET_ID).execute()
+    )
+    titles = [sheet["properties"]["title"] for sheet in spreadsheet["sheets"]]
+    titles = list(filter(lambda t: t not in ["Template", "Categories"], titles))
 
-    resp = service.spreadsheets().values().batchGet(
-        spreadsheetId=FINANCE_SPREADSHEET_ID,
-        ranges=titles,
-    ).execute()
-    account_to_transactions = deserialize_sheets(titles, resp['valueRanges'], days=num_days)
+    resp = (
+        service.spreadsheets()
+        .values()
+        .batchGet(spreadsheetId=FINANCE_SPREADSHEET_ID, ranges=titles)
+        .execute()
+    )
+    account_to_transactions = deserialize_sheets(
+        titles, resp["valueRanges"], days=num_days
+    )
     return jsonify(account_to_transactions)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
     # can be configured by adding an `entrypoint` to app.yaml.
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)

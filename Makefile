@@ -10,6 +10,15 @@ serve:
 		jchorl/appengine-python:latest \
 		sh -c "pip install -r requirements.txt && python main.py"
 
+black:
+	docker run -it --rm \
+		-v "$(PWD)":/spendy \
+		-w /spendy \
+		-p 8080:8080 \
+		-p 8000:8000 \
+		jchorl/appengine-python:latest \
+		sh -c "pip install black && black ."
+
 client-serve:
 	docker run -it --rm \
 		-v "$(PWD)"/client:/usr/src/app \
