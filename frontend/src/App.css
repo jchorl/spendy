@@ -1,0 +1,13 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.thisMonth {
+  display: flex;
+}
+
+.half {
+  width: 50%;
+}

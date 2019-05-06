@@ -1,0 +1,8 @@
+:5000
+
+log
+gzip
+
+proxy /api localhost:8080
+proxy /_ah localhost:8080
+proxy / localhost:3000

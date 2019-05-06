@@ -42,7 +42,7 @@ def get_google_creds():
 
 
 def deserialize_sheets(accounts, value_ranges, days=30):
-    account_to_transactions = {}
+    all_transactions = []
     for idx in range(len(accounts)):
         values = value_ranges[idx]["values"]
         headings = values[0]
@@ -59,6 +59,7 @@ def deserialize_sheets(accounts, value_ranges, days=30):
 
         transactions = [
             {
+                "account": accounts[idx],
                 "date": datetime.datetime.strptime(value[date_idx], "%Y-%m-%d"),
                 "amount": value[amount_idx],
                 "category": value[category_idx],
@@ -75,8 +76,8 @@ def deserialize_sheets(accounts, value_ranges, days=30):
             )
         )
 
-        account_to_transactions[accounts[idx]] = transactions
-    return account_to_transactions
+        all_transactions += transactions
+    return all_transactions
 
 
 @app.route("/api/charges")
@@ -96,10 +97,8 @@ def get_charges():
         .batchGet(spreadsheetId=FINANCE_SPREADSHEET_ID, ranges=titles)
         .execute()
     )
-    account_to_transactions = deserialize_sheets(
-        titles, resp["valueRanges"], days=num_days
-    )
-    return jsonify(account_to_transactions)
+    all_transactions = deserialize_sheets(titles, resp["valueRanges"], days=num_days)
+    return jsonify(all_transactions)
 
 
 if __name__ == "__main__":
