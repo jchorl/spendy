@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
-import { List, Map, Range, Set, fromJS } from "immutable";
+import { List, Map, Set } from "immutable";
 import { ACCOUNT_TO_CURRENCY } from "./config";
 
 function getFirstOfMonth() {

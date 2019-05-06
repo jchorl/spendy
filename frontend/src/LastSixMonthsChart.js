@@ -14,6 +14,9 @@ function getDimensions(transactions) {
 }
 
 function getDataset(transactions, exchangeRates) {
+  const now = new Date();
+  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+
   // a map of category => amount that will be cloned for each month
   const categoryToAmount = transactions
     .map(t => t.get("category"))
@@ -23,6 +26,7 @@ function getDataset(transactions, exchangeRates) {
       Map()
     );
   return transactions
+    .filter(t => t.get("date") >= sixMonthsAgo)
     .map(t =>
       t.update(
         "amount",

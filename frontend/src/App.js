@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { fromJS } from "immutable";
 import LastSixMonthsChart from "./LastSixMonthsChart";
+import Savings from "./Savings";
 import ThisMonthTotal from "./ThisMonthTotal";
 import ThisMonthCategorized from "./ThisMonthCategorized";
 import LoadingSpinner from "./LoadingSpinner";
@@ -20,7 +21,7 @@ class App extends Component {
       );
 
     const chargesSearchParams = new URLSearchParams();
-    chargesSearchParams.set("days", 180);
+    chargesSearchParams.set("days", 365);
     fetch(`/api/charges?${chargesSearchParams.toString()}`)
       .then(resp => resp.json())
       .then(transactions =>
@@ -56,6 +57,8 @@ class App extends Component {
             />
           </div>
         </div>
+        <h1>Savings</h1>
+        <Savings transactions={transactions} exchangeRates={rates} />
         <h1>Last 6 Months</h1>
         <LastSixMonthsChart transactions={transactions} exchangeRates={rates} />
       </div>

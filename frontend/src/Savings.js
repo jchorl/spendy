@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
-import { List, Map, Set } from "immutable";
+import { List, Map } from "immutable";
 import { ACCOUNT_TO_CURRENCY } from "./config";
 
 // a bug in immutable prevents dates from being map values
@@ -11,20 +11,20 @@ function dayToString(date) {
   return date.toISOString();
 }
 
-function getFirstOfMonth() {
+function getFirstOfYear() {
   const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
+  return new Date(now.getFullYear(), 0, 1);
 }
 
-function getFirstOfNextMonth() {
+function getFirstOfNextYear() {
   const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return new Date(now.getFullYear() + 1, 0, 1);
 }
 
 function getDataset(transactions, exchangeRates) {
-  const firstOfMonth = getFirstOfMonth();
+  const firstOfYear = getFirstOfYear();
   return transactions
-    .filter(t => t.get("date") >= firstOfMonth) // only dates within range
+    .filter(t => t.get("date") >= firstOfYear) // only dates within range
     .map(t =>
       t.update(
         "amount",
@@ -41,7 +41,7 @@ function getDataset(transactions, exchangeRates) {
         )
       )
     ) // group by date
-    .update(dayToString(firstOfMonth), (transactions = List()) => transactions) // make sure the first of month is present
+    .update(dayToString(firstOfYear), (transactions = List()) => transactions) // make sure the first of year is present
     .map(transactionsForDate =>
       transactionsForDate.reduce(
         (total, transaction) => (total += transaction.get("amount")),
@@ -60,7 +60,7 @@ function getDataset(transactions, exchangeRates) {
     ); // roll up
 }
 
-class ThisMonthTotal extends Component {
+class Savings extends Component {
   static propTypes = {
     exchangeRates: PropTypes.instanceOf(Map).isRequired,
     transactions: PropTypes.instanceOf(List).isRequired
@@ -68,12 +68,9 @@ class ThisMonthTotal extends Component {
 
   getOptions = () => {
     const { exchangeRates, transactions } = this.props;
-    const excludedCategories = Set(["Savings", "Rent"]);
-    const charges = transactions
-      .filter(t => t.get("amount") > 0) // filter for only expenses
-      .filter(t => !excludedCategories.contains(t.get("category")));
-    const dataset = getDataset(charges, exchangeRates);
-    const yMax = Math.max(dataset.getIn([-1, 1], 450), 450);
+    const savings = transactions.filter(t => t.get("category") === "Savings"); // filter for only savings
+    const dataset = getDataset(savings, exchangeRates);
+    const yMax = Math.max(dataset.getIn([-1, 1], 21000), 21000);
 
     return {
       legend: {},
@@ -88,8 +85,8 @@ class ThisMonthTotal extends Component {
         name: "Date",
         nameLocation: "center",
         nameGap: 30,
-        min: getFirstOfMonth(),
-        max: getFirstOfNextMonth()
+        min: getFirstOfYear(),
+        max: getFirstOfNextYear()
       },
       yAxis: {
         name: "$ (USD)",
@@ -109,10 +106,10 @@ class ThisMonthTotal extends Component {
               [
                 {
                   name: "Target",
-                  coord: [getFirstOfMonth(), 0]
+                  coord: [getFirstOfYear(), 0]
                 },
                 {
-                  coord: [getFirstOfNextMonth(), 400]
+                  coord: [getFirstOfNextYear(), 20000]
                 }
               ]
             ]
@@ -127,4 +124,4 @@ class ThisMonthTotal extends Component {
   }
 }
 
-export default ThisMonthTotal;
+export default Savings;
