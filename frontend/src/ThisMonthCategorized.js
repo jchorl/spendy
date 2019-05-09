@@ -1,18 +1,11 @@
 import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
-import { List, Map, Set } from "immutable";
+import { List, Map } from "immutable";
 import { ACCOUNT_TO_CURRENCY } from "./config";
 
-function getFirstOfMonth() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
-}
-
 function getDataset(transactions, exchangeRates) {
-  const firstOfMonth = getFirstOfMonth();
   return transactions
-    .filter(t => t.get("date") >= firstOfMonth) // only dates within range
     .map(t =>
       t.update(
         "amount",
@@ -39,11 +32,7 @@ class ThisMonthCategorized extends Component {
 
   getOptions = () => {
     const { exchangeRates, transactions } = this.props;
-    const excludedCategories = Set(["Savings", "Rent"]);
-    const charges = transactions
-      .filter(t => t.get("amount") > 0) // filter for only expenses
-      .filter(t => !excludedCategories.contains(t.get("category")));
-    const dataset = getDataset(charges, exchangeRates);
+    const dataset = getDataset(transactions, exchangeRates);
 
     return {
       legend: {},

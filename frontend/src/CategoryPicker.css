@@ -1,0 +1,18 @@
+.CategoryPicker {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.CategoryPicker .category {
+  margin: 2px 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.CategoryPicker .selected {
+  color: #f3f3f3;
+  background: #2d3047;
+}

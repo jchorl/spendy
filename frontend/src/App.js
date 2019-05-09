@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { fromJS } from "immutable";
 import LastSixMonthsChart from "./LastSixMonthsChart";
-import Savings from "./Savings";
-import ThisMonthTotal from "./ThisMonthTotal";
-import ThisMonthCategorized from "./ThisMonthCategorized";
 import LoadingSpinner from "./LoadingSpinner";
+import Savings from "./Savings";
+import ThisMonth from "./ThisMonth";
 import "./App.css";
 
 class App extends Component {
@@ -46,17 +45,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1>This Month</h1>
-        <div className="thisMonth">
-          <div className="half">
-            <ThisMonthTotal transactions={transactions} exchangeRates={rates} />
-          </div>
-          <div className="half">
-            <ThisMonthCategorized
-              transactions={transactions}
-              exchangeRates={rates}
-            />
-          </div>
-        </div>
+        <ThisMonth transactions={transactions} exchangeRates={rates} />
         <h1>Savings</h1>
         <Savings transactions={transactions} exchangeRates={rates} />
         <h1>Last 6 Months</h1>

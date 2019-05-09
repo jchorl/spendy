@@ -1,1 +1,13 @@
 runtime: python37
+
+handlers:
+- url: /api/
+  secure: always
+  script: auto
+- url: /static/
+  secure: always
+  static_dir: frontend/build/static
+- url: /
+  secure: always
+  static_files: frontend/build/index.html
+  upload: frontend/build/index.html

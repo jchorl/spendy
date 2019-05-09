@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
-import { List, Map, Set } from "immutable";
+import { List, Map } from "immutable";
 import { ACCOUNT_TO_CURRENCY } from "./config";
+import { getFirstOfMonth, getFirstOfNextMonth } from "./util";
 
 // a bug in immutable prevents dates from being map values
 // https://github.com/immutable-js/immutable-js/issues/1643
@@ -11,20 +12,9 @@ function dayToString(date) {
   return date.toISOString();
 }
 
-function getFirstOfMonth() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
-}
-
-function getFirstOfNextMonth() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() + 1, 1);
-}
-
 function getDataset(transactions, exchangeRates) {
   const firstOfMonth = getFirstOfMonth();
   return transactions
-    .filter(t => t.get("date") >= firstOfMonth) // only dates within range
     .map(t =>
       t.update(
         "amount",
@@ -68,12 +58,10 @@ class ThisMonthTotal extends Component {
 
   getOptions = () => {
     const { exchangeRates, transactions } = this.props;
-    const excludedCategories = Set(["Savings", "Rent"]);
-    const charges = transactions
-      .filter(t => t.get("amount") > 0) // filter for only expenses
-      .filter(t => !excludedCategories.contains(t.get("category")));
-    const dataset = getDataset(charges, exchangeRates);
+    const dataset = getDataset(transactions, exchangeRates);
     const yMax = Math.max(dataset.getIn([-1, 1], 450), 450);
+    const firstOfMonth = getFirstOfMonth();
+    const firstOfNextMonth = getFirstOfNextMonth();
 
     return {
       legend: {},
@@ -88,8 +76,8 @@ class ThisMonthTotal extends Component {
         name: "Date",
         nameLocation: "center",
         nameGap: 30,
-        min: getFirstOfMonth(),
-        max: getFirstOfNextMonth()
+        min: firstOfMonth,
+        max: firstOfNextMonth
       },
       yAxis: {
         name: "$ (USD)",
@@ -109,10 +97,10 @@ class ThisMonthTotal extends Component {
               [
                 {
                   name: "Target",
-                  coord: [getFirstOfMonth(), 0]
+                  coord: [firstOfMonth, 0]
                 },
                 {
-                  coord: [getFirstOfNextMonth(), 400]
+                  coord: [firstOfNextMonth, 400]
                 }
               ]
             ]

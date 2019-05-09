@@ -39,7 +39,7 @@ export:
 		-u $(UID):$(GID) \
 		--net=host \
 		node:latest \
-		sh -c "npm run build && npm run export"
+		sh -c "npm run build"
 
 prettier:
 	docker run -it --rm \
@@ -57,7 +57,7 @@ node:
 		node:latest \
 		bash
 
-deploy:
+deploy: export
 	docker run -it --rm \
 		-v $(PWD):/spendy \
 		-w /spendy \

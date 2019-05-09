@@ -4,10 +4,6 @@
   align-items: stretch;
 }
 
-.thisMonth {
-  display: flex;
-}
-
 .half {
   width: 50%;
 }

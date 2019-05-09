@@ -35,8 +35,9 @@ def get_google_creds():
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_console()
         # Save the credentials for the next run
-        with open("token.pickle", "wb") as token:
-            pickle.dump(creds, token)
+        # commented out because app engine has read-only fs
+        # with open("token.pickle", "wb") as token:
+        #     pickle.dump(creds, token)
 
     return creds
 
