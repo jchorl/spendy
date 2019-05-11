@@ -91,9 +91,11 @@ class ThisMonth extends Component {
         />
         <div className="charts">
           <div className="five">
+            <div className="chartTitle">Total</div>
             <ThisMonthTotal transactions={normalizedCharges} />
           </div>
           <div className="five">
+            <div className="chartTitle">Categorized</div>
             <ThisMonthCategorized transactions={normalizedCharges} />
           </div>
           <div className="two">

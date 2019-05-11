@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 FINANCE_SPREADSHEET_ID = "1yiHbSLDIIYPZPJrgfSnpJZKelaQ3CFVE9bFPs77MMAI"
 

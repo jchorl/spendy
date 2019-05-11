@@ -1,3 +1,9 @@
 .ThisMonth .charts {
   display: flex;
 }
+
+.ThisMonth .charts .chartTitle {
+  font-weight: bold;
+  text-align: center;
+  margin-top: 40px;
+}
