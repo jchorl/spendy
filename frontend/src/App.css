@@ -4,6 +4,50 @@
   align-items: stretch;
 }
 
-.half {
-  width: 50%;
+.one {
+  width: calc(100% / 12);
+}
+
+.two {
+  width: calc(200% / 12);
+}
+
+.three {
+  width: calc(300% / 12);
+}
+
+.four {
+  width: calc(400% / 12);
+}
+
+.five {
+  width: calc(500% / 12);
+}
+
+.six {
+  width: calc(600% / 12);
+}
+
+.seven {
+  width: calc(700% / 12);
+}
+
+.eight {
+  width: calc(800% / 12);
+}
+
+.nine {
+  width: calc(900% / 12);
+}
+
+.ten {
+  width: calc(1000% / 12);
+}
+
+.eleven {
+  width: calc(1100% / 12);
+}
+
+.twelve {
+  width: calc(1200% / 12);
 }

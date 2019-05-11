@@ -2,14 +2,24 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { List, Map, Set } from "immutable";
 import CategoryPicker from "./CategoryPicker";
+import PercentToTarget from "./PercentToTarget";
 import ThisMonthTotal from "./ThisMonthTotal";
 import ThisMonthCategorized from "./ThisMonthCategorized";
-import { getFirstOfMonth } from "./util";
+import { MONTHLY_SPEND_GOAL } from "./config";
+import {
+  getFirstOfMonth,
+  getFirstOfNextMonth,
+  normalizeToUSD,
+  percentageThroughDates
+} from "./util";
 import "./ThisMonth.css";
 
 const DEFAULT_EXCLUDED_CATEGORIES = Set([
+  "Groceries",
+  "Home Insurance",
   "Laundry",
   "Life Insurance",
+  "Phone",
   "Savings",
   "Rent"
 ]);
@@ -59,6 +69,18 @@ class ThisMonth extends Component {
     const selectedChargesThisMonth = chargesThisMonth.filter(t =>
       selectedCategories.includes(t.get("category"))
     );
+    const normalizedCharges = normalizeToUSD(
+      selectedChargesThisMonth,
+      exchangeRates
+    );
+    const total = normalizedCharges.reduce(
+      (runningTotal, t) => runningTotal + t.get("amount"),
+      0
+    );
+    const progressThroughMonth = percentageThroughDates(
+      getFirstOfMonth(),
+      getFirstOfNextMonth()
+    );
 
     return (
       <div className="ThisMonth">
@@ -68,16 +90,18 @@ class ThisMonth extends Component {
           onToggle={this.toggleCategory}
         />
         <div className="charts">
-          <div className="half">
-            <ThisMonthTotal
-              transactions={selectedChargesThisMonth}
-              exchangeRates={exchangeRates}
-            />
+          <div className="five">
+            <ThisMonthTotal transactions={normalizedCharges} />
           </div>
-          <div className="half">
-            <ThisMonthCategorized
-              transactions={selectedChargesThisMonth}
-              exchangeRates={exchangeRates}
+          <div className="five">
+            <ThisMonthCategorized transactions={normalizedCharges} />
+          </div>
+          <div className="two">
+            <PercentToTarget
+              actualCurrentVal={total}
+              targetVal={MONTHLY_SPEND_GOAL}
+              progressThroughPeriod={progressThroughMonth}
+              inverted={true}
             />
           </div>
         </div>

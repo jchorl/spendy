@@ -7,3 +7,6 @@ export const ACCOUNT_TO_CURRENCY = {
   "Tangerine Credit Card": "CAD",
   "Tangerine Checking": "CAD"
 };
+
+export const MONTHLY_SPEND_GOAL = 400;
+export const YEARLY_SAVINGS_GOAL = 20000;

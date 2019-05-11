@@ -1,18 +1,10 @@
 import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
-import { List, Map } from "immutable";
-import { ACCOUNT_TO_CURRENCY } from "./config";
+import { List } from "immutable";
 
-function getDataset(transactions, exchangeRates) {
+function getDataset(transactions) {
   return transactions
-    .map(t =>
-      t.update(
-        "amount",
-        amount =>
-          amount / exchangeRates.get(ACCOUNT_TO_CURRENCY[t.get("account")])
-      )
-    ) // normalize to USD
     .groupBy(t => t.get("category")) // group by category
     .map(transactionsForCategory =>
       transactionsForCategory.reduce(
@@ -26,13 +18,12 @@ function getDataset(transactions, exchangeRates) {
 
 class ThisMonthCategorized extends Component {
   static propTypes = {
-    exchangeRates: PropTypes.instanceOf(Map).isRequired,
     transactions: PropTypes.instanceOf(List).isRequired
   };
 
   getOptions = () => {
-    const { exchangeRates, transactions } = this.props;
-    const dataset = getDataset(transactions, exchangeRates);
+    const { transactions } = this.props;
+    const dataset = getDataset(transactions);
 
     return {
       legend: {},
@@ -59,7 +50,11 @@ class ThisMonthCategorized extends Component {
       },
       series: [
         {
-          type: "bar"
+          type: "bar",
+          label: {
+            show: true,
+            position: "top"
+          }
         }
       ]
     };

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
 import { List, Map, Set } from "immutable";
-import { ACCOUNT_TO_CURRENCY } from "./config";
+import { normalizeToUSD } from "./util";
 
 function getDimensions(transactions) {
   return List(["month"]).concat(
@@ -13,7 +13,7 @@ function getDimensions(transactions) {
   );
 }
 
-function getDataset(transactions, exchangeRates) {
+function getDataset(transactions) {
   const now = new Date();
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
 
@@ -27,13 +27,6 @@ function getDataset(transactions, exchangeRates) {
     );
   return transactions
     .filter(t => t.get("date") >= sixMonthsAgo)
-    .map(t =>
-      t.update(
-        "amount",
-        amount =>
-          amount / exchangeRates.get(ACCOUNT_TO_CURRENCY[t.get("account")])
-      )
-    ) // normalize to USD
     .groupBy(
       c => new Date(c.get("date").getFullYear(), c.get("date").getMonth())
     ) // group by month and year
@@ -76,8 +69,9 @@ class LastSixMonthsChart extends Component {
     const charges = transactions
       .filter(t => t.get("amount") > 0) // filter for only expenses
       .filter(t => !excludedCategories.contains(t.get("category")));
-    const dimensions = getDimensions(charges);
-    const dataset = getDataset(charges, exchangeRates);
+    const normalizedCharges = normalizeToUSD(charges, exchangeRates);
+    const dimensions = getDimensions(normalizedCharges);
+    const dataset = getDataset(normalizedCharges);
 
     return {
       legend: {

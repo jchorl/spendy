@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
 import { List } from "immutable";
-import { MONTHLY_SPEND_GOAL } from "./config";
-import { getFirstOfMonth, getFirstOfNextMonth } from "./util";
+import { YEARLY_SAVINGS_GOAL } from "./config";
+import { getFirstOfYear, getFirstOfNextYear } from "./util";
 
 // a bug in immutable prevents dates from being map values
 // https://github.com/immutable-js/immutable-js/issues/1643
@@ -13,7 +13,6 @@ function dayToString(date) {
 }
 
 function getDataset(transactions) {
-  const firstOfMonth = getFirstOfMonth();
   return transactions
     .groupBy(t =>
       dayToString(
@@ -24,7 +23,10 @@ function getDataset(transactions) {
         )
       )
     ) // group by date
-    .update(dayToString(firstOfMonth), (transactions = List()) => transactions) // make sure the first of month is present
+    .update(
+      dayToString(getFirstOfYear()),
+      (transactions = List()) => transactions
+    ) // make sure the first of year is present
     .map(transactionsForDate =>
       transactionsForDate.reduce(
         (total, transaction) => (total += transaction.get("amount")),
@@ -43,23 +45,24 @@ function getDataset(transactions) {
     ); // roll up
 }
 
-class ThisMonthTotal extends Component {
+class SavingsChart extends Component {
   static propTypes = {
     transactions: PropTypes.instanceOf(List).isRequired
   };
 
   getOptions = () => {
     const { transactions } = this.props;
-    const dataset = getDataset(transactions);
-    const yMax = Math.max(
-      dataset.getIn([-1, 1], MONTHLY_SPEND_GOAL + 50),
-      MONTHLY_SPEND_GOAL + 50
-    );
-    const firstOfMonth = getFirstOfMonth();
-    const firstOfNextMonth = getFirstOfNextMonth();
+    const firstOfYear = getFirstOfYear();
+    const firstOfNextYear = getFirstOfNextYear();
+
     const total = transactions.reduce(
       (runningTotal, t) => runningTotal + t.get("amount"),
       0
+    );
+    const dataset = getDataset(transactions);
+    const yMax = Math.max(
+      dataset.getIn([-1, 1], YEARLY_SAVINGS_GOAL + 1000),
+      YEARLY_SAVINGS_GOAL + 1000
     );
 
     return {
@@ -75,8 +78,8 @@ class ThisMonthTotal extends Component {
         name: "Date",
         nameLocation: "center",
         nameGap: 30,
-        min: firstOfMonth,
-        max: firstOfNextMonth
+        min: firstOfYear,
+        max: firstOfNextYear
       },
       yAxis: {
         name: "$ (USD)",
@@ -96,10 +99,10 @@ class ThisMonthTotal extends Component {
               [
                 {
                   name: "Target",
-                  coord: [firstOfMonth, 0]
+                  coord: [firstOfYear, 0]
                 },
                 {
-                  coord: [firstOfNextMonth, MONTHLY_SPEND_GOAL]
+                  coord: [firstOfNextYear, YEARLY_SAVINGS_GOAL]
                 }
               ]
             ]
@@ -125,4 +128,4 @@ class ThisMonthTotal extends Component {
   }
 }
 
-export default ThisMonthTotal;
+export default SavingsChart;

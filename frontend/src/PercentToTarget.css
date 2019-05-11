@@ -1,0 +1,29 @@
+.PercentToTarget {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.PercentToTarget .percentage,
+.PercentToTarget .target {
+  text-align: center;
+}
+
+.PercentToTarget .percentage {
+  margin-bottom: 20px;
+}
+
+.green {
+  color: #1d8829;
+}
+
+.yellow {
+  color: #ff851b;
+}
+
+.red {
+  color: #ff4136;
+}
