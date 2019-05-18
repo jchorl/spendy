@@ -11,6 +11,7 @@ from google.auth.transport.requests import Request
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 FINANCE_SPREADSHEET_ID = "1yiHbSLDIIYPZPJrgfSnpJZKelaQ3CFVE9bFPs77MMAI"
+IGNORED_SHEETS = ["Template", "Categories", "IRA/401k/HSA log"]
 
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -90,7 +91,7 @@ def get_charges():
         service.spreadsheets().get(spreadsheetId=FINANCE_SPREADSHEET_ID).execute()
     )
     titles = [sheet["properties"]["title"] for sheet in spreadsheet["sheets"]]
-    titles = list(filter(lambda t: t not in ["Template", "Categories"], titles))
+    titles = list(filter(lambda t: t not in IGNORED_SHEETS, titles))
 
     resp = (
         service.spreadsheets()

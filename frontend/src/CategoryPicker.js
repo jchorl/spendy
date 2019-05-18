@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Set } from "immutable";
+import { List, Set } from "immutable";
 import "./CategoryPicker.css";
 
 class CategoryPicker extends Component {
   static propTypes = {
-    categories: PropTypes.instanceOf(Set).isRequired,
+    categories: PropTypes.instanceOf(List).isRequired,
     selected: PropTypes.instanceOf(Set).isRequired,
     onToggle: PropTypes.func
   };

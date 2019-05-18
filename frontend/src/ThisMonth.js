@@ -15,13 +15,15 @@ import {
 import "./ThisMonth.css";
 
 const DEFAULT_EXCLUDED_CATEGORIES = Set([
-  "Groceries",
   "Home Insurance",
   "Laundry",
   "Life Insurance",
+  "Music",
   "Phone",
   "Savings",
-  "Rent"
+  "Rent",
+  "Rewards",
+  "Utilities"
 ]);
 
 function filterForChargesThisMonth(transactions) {
@@ -65,7 +67,11 @@ class ThisMonth extends Component {
     const { selectedCategories } = this.state;
     const { exchangeRates, transactions } = this.props;
     const chargesThisMonth = filterForChargesThisMonth(transactions);
-    const categories = chargesThisMonth.map(t => t.get("category")).toSet();
+    const categories = chargesThisMonth
+      .map(t => t.get("category"))
+      .toSet()
+      .toList()
+      .sort();
     const selectedChargesThisMonth = chargesThisMonth.filter(t =>
       selectedCategories.includes(t.get("category"))
     );
