@@ -15,6 +15,7 @@ import {
 import "./ThisMonth.css";
 
 const DEFAULT_EXCLUDED_CATEGORIES = Set([
+  "Health",
   "Home Insurance",
   "Laundry",
   "Life Insurance",
