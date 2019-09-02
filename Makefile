@@ -1,3 +1,4 @@
+PROJECT_ID=spendy-238218
 UID=$(shell id -u)
 GID=$(shell id -g)
 
@@ -61,6 +62,7 @@ deploy: export
 	docker run -it --rm \
 		-v $(PWD):/spendy \
 		-w /spendy \
+		--env=CLOUDSDK_CORE_PROJECT=$(PROJECT_ID) \
 		jchorl/appengine-python:latest \
-		sh -c "echo \"gcloud auth login\ngcloud config set project spendy-238218\ngcloud app deploy\" && \
+		sh -c "echo \"gcloud auth login\ngcloud app deploy\" && \
 		bash"
