@@ -42,7 +42,7 @@ class AnnualChartWithGoal extends Component {
     return (
       <div className="AnnualChartWithGoal">
         <div className="ten">
-          <AnnualChart transactions={normalizedTransactions} />
+          <AnnualChart goal={goal} transactions={normalizedTransactions} />
         </div>
         <div className="two">
           <PercentToTarget
