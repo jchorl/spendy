@@ -8,5 +8,5 @@ export const ACCOUNT_TO_CURRENCY = {
   "Tangerine Checking": "CAD"
 };
 
-export const MONTHLY_SPEND_GOAL = 400;
-export const YEARLY_SAVINGS_GOAL = 20000;
+export const MONTHLY_SPEND_GOAL = 500;
+export const YEARLY_SAVINGS_GOAL = 25000;
