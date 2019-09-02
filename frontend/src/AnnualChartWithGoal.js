@@ -2,31 +2,35 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { List, Map } from "immutable";
 import PercentToTarget from "./PercentToTarget";
-import SavingsChart from "./SavingsChart";
-import { YEARLY_SAVINGS_GOAL } from "./config";
+import AnnualChart from "./AnnualChart";
 import {
   getFirstOfYear,
   getFirstOfNextYear,
   normalizeToUSD,
   percentageThroughDates
 } from "./util";
-import "./Savings.css";
+import "./AnnualChartWithGoal.css";
 
-class Savings extends Component {
+class AnnualChartWithGoal extends Component {
   static propTypes = {
+    goal: PropTypes.number.isRequired,
+    category: PropTypes.string.isRequired,
     exchangeRates: PropTypes.instanceOf(Map).isRequired,
     transactions: PropTypes.instanceOf(List).isRequired
   };
 
   render() {
-    const { exchangeRates, transactions } = this.props;
+    const { category, exchangeRates, goal, transactions } = this.props;
     const firstOfYear = getFirstOfYear();
     const firstOfNextYear = getFirstOfNextYear();
-    const savings = transactions
-      .filter(t => t.get("category") === "Savings") // filter for only savings
+    const selectedTransactions = transactions
+      .filter(t => t.get("category") === category) // filter for category
       .filter(t => t.get("date") >= firstOfYear); // only dates within range
-    const normalizedSavings = normalizeToUSD(savings, exchangeRates);
-    const total = normalizedSavings.reduce(
+    const normalizedTransactions = normalizeToUSD(
+      selectedTransactions,
+      exchangeRates
+    );
+    const total = normalizedTransactions.reduce(
       (runningTotal, t) => runningTotal + t.get("amount"),
       0
     );
@@ -36,14 +40,14 @@ class Savings extends Component {
     );
 
     return (
-      <div className="Savings">
+      <div className="AnnualChartWithGoal">
         <div className="ten">
-          <SavingsChart transactions={normalizedSavings} />
+          <AnnualChart transactions={normalizedTransactions} />
         </div>
         <div className="two">
           <PercentToTarget
             actualCurrentVal={total}
-            targetVal={YEARLY_SAVINGS_GOAL}
+            targetVal={goal}
             progressThroughPeriod={progressThroughYear}
           />
         </div>
@@ -52,4 +56,4 @@ class Savings extends Component {
   }
 }
 
-export default Savings;
+export default AnnualChartWithGoal;

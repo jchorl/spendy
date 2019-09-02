@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { fromJS } from "immutable";
 import LastSixMonthsChart from "./LastSixMonthsChart";
 import LoadingSpinner from "./LoadingSpinner";
-import Savings from "./Savings";
+import AnnualChartWithGoal from "./AnnualChartWithGoal";
 import ThisMonth from "./ThisMonth";
+import { YEARLY_CHARITY_GOAL, YEARLY_SAVINGS_GOAL } from "./config";
 import "./App.css";
 
 class App extends Component {
@@ -47,7 +48,19 @@ class App extends Component {
         <h1>This Month</h1>
         <ThisMonth transactions={transactions} exchangeRates={rates} />
         <h1>Savings</h1>
-        <Savings transactions={transactions} exchangeRates={rates} />
+        <AnnualChartWithGoal
+          category="Savings"
+          goal={YEARLY_SAVINGS_GOAL}
+          transactions={transactions}
+          exchangeRates={rates}
+        />
+        <h1>Charity</h1>
+        <AnnualChartWithGoal
+          category="Charity"
+          goal={YEARLY_CHARITY_GOAL}
+          transactions={transactions}
+          exchangeRates={rates}
+        />
         <h1>Last 6 Months</h1>
         <LastSixMonthsChart transactions={transactions} exchangeRates={rates} />
       </div>

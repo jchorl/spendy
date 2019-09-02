@@ -10,3 +10,4 @@ export const ACCOUNT_TO_CURRENCY = {
 
 export const MONTHLY_SPEND_GOAL = 500;
 export const YEARLY_SAVINGS_GOAL = 25000;
+export const YEARLY_CHARITY_GOAL = 2000;

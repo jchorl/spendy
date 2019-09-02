@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import ReactEcharts from "echarts-for-react";
 import PropTypes from "prop-types";
 import { List } from "immutable";
-import { YEARLY_SAVINGS_GOAL } from "./config";
 import { getFirstOfYear, getFirstOfNextYear } from "./util";
 
 // a bug in immutable prevents dates from being map values
@@ -45,13 +44,14 @@ function getDataset(transactions) {
     ); // roll up
 }
 
-class SavingsChart extends Component {
+class AnnualChart extends Component {
   static propTypes = {
+    goal: PropTypes.number.isRequired,
     transactions: PropTypes.instanceOf(List).isRequired
   };
 
   getOptions = () => {
-    const { transactions } = this.props;
+    const { goal, transactions } = this.props;
     const firstOfYear = getFirstOfYear();
     const firstOfNextYear = getFirstOfNextYear();
 
@@ -60,10 +60,7 @@ class SavingsChart extends Component {
       0
     );
     const dataset = getDataset(transactions);
-    const yMax = Math.max(
-      dataset.getIn([-1, 1], YEARLY_SAVINGS_GOAL + 1000),
-      YEARLY_SAVINGS_GOAL + 1000
-    );
+    const yMax = Math.max(dataset.getIn([-1, 1], goal + 1000), goal + 1000);
 
     return {
       legend: {},
@@ -102,7 +99,7 @@ class SavingsChart extends Component {
                   coord: [firstOfYear, 0]
                 },
                 {
-                  coord: [firstOfNextYear, YEARLY_SAVINGS_GOAL]
+                  coord: [firstOfNextYear, goal]
                 }
               ]
             ]
@@ -128,4 +125,4 @@ class SavingsChart extends Component {
   }
 }
 
-export default SavingsChart;
+export default AnnualChart;
